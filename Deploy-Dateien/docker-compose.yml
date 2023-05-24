@@ -16,7 +16,7 @@ services:
   moodle:
     image: bitnami/moodle:4.1.2
     ports:
-      - 8080:8080
+      - 8081:8080
     environment:
       - MOODLE_DATABASE_HOST=mariadb
       - MOODLE_DATABASE_USER=root
@@ -32,3 +32,16 @@ services:
       - moodle_database_password
     networks:
       - moodle_network
+
+networks:
+  moodle_network:
+
+volumes:
+  moodledata:
+  dbdata:
+
+secrets:
+  mysql_root_password:
+    file: ./mysql_root_password.txt
+  moodle_database_password:
+    file: ./moodle_database_password.txt
