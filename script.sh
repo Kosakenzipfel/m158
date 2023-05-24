@@ -23,21 +23,3 @@ docker exec -i dockercompose_mariadb_1 mysql -u root --password=root moodle < ./
 
 # Aufräumen: Lokalen Dump löschen
 rm dump.sql
-
-# Datenbank Backup einrichten
-# Datenbankzugangsdaten 
-MYSQL_USER="root" 
-MYSQL_PASSWORD="root" 
-MYSQL_DATABASE="moodle" 
-
-# Verzeichnis, in dem die Sicherungsdatei gespeichert wird 
-BACKUP_DIR="/var/lib/mysql" 
-
-# Dateinamen für die Sicherungsdatei 
-BACKUP_FILENAME="$MYSQL_DATABASE-$(date +%Y-%m-%d_%H-%M-%S).sql" 
-
-# MySQL-Dump-Befehl 
-docker exec -i dockercompose_mariadb_1 bash -c "mysqldump -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > $BACKUP_DIR/$BACKUP_FILENAME" 
-
-# Erfolgsmeldung 
-echo "MySQL-Dump erfolgreich erstellt: $BACKUP_FILENAME"
