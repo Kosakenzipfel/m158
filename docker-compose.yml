@@ -32,3 +32,16 @@ services:
       - moodle_database_password
     networks:
       - moodle_network
+
+networks:
+  moodle_network:
+
+volumes:
+  moodledata:
+  dbdata:
+
+secrets:
+  mysql_root_password:
+    file: ./mysql_root_password.txt
+  moodle_database_password:
+    file: ./moodle_database_password.txt
