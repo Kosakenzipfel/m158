@@ -1,47 +1,49 @@
-version: '3.1'
+version: '3.1' #Docker-Compose Version wird angegeben
 services:
-  mariadb:
-    image: mariadb
-    volumes:
-      - dbdata:/var/lib/mysql
-    environment:
+  mariadb: 
+    image: mariadb #Image des MariaDB Containers (Datenbank fuer das Moodle) wird angegeben
+    volumes: #Volume mit dem Namen dbdata wird auf dem Host mit dem Container gemountet
+      - dbdata:/var/lib/mysql 
+    environment: #Diverse environment Variabeln werden angegeben, wie der DB-Namen, Root-User-Name und das Root-Passwort
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
       - MYSQL_ROOT_USER=root
       - MYSQL_DATABASE=moodle
-    secrets:
+    secrets: #Das Root Passwort wird per Secret angegeben und muss hier referenziert werden
       - mysql_root_password
-    networks:
+    networks: #Container wird dem Netzwerk moodle_network angefuegt
       - moodle_network
 
   moodle:
-    image: bitnami/moodle:4.1.2
-    ports:
-      - 8081:8080
-    environment:
+    image: bitnami/moodle:4.1.2 #Image des moodle Contianer (Moodle Web-Applikation) wird angegeben
+    ports: #Port Weiterleitung vom Host-Port 8081 auf den Container-Port 8080
+      - 8081:8080 
+    environment: #Diverse Environment Variablen werden angegeben wie z.B. der User-Name und Passwort des Moodle Start-Users
       - MOODLE_DATABASE_HOST=mariadb
       - MOODLE_DATABASE_USER=root
       - MOODLE_DATABASE_PASSWORD_FILE=/run/secrets/moodle_database_password
       - MOODLE_DATABASE_NAME=moodle
       - PUID=998
       - PGID=100
-    volumes:
-      - moodledata:/bitnami/moodle
-    depends_on:
+    volumes: #Volume mit dem Namen moodledata wird auf dem Host mit dem Container gemountet
+      - moodledata:/bitnami/moodledata
+    depends_on: #Wenn das Docker-Compose gebuilded wird, wird der Moodle Container nach dem MariadDB Container gebuilded
       - mariadb
-    secrets:
+    secrets: #Das Root Passwort wird per Secret angegeben und muss hier referenziert werden
       - moodle_database_password
-    networks:
+    networks: #Container wird dem Netzwerk moodle_network angefuegt
       - moodle_network
 
-networks:
+networks: #Das Netzwerk moodle_network wird mit den Standart-Konfigurationen erstellt
   moodle_network:
 
-volumes:
+volumes: #Die beiden Volumes, welche gemountet werden, werden erstellt
   moodledata:
   dbdata:
 
-secrets:
+secrets: #Die Secrets werden erstellt und mit einem Wert ausgestatet. Beide Secrets verwenden den Inhalt einer referenzierten txt-Datei
   mysql_root_password:
     file: ./mysql_root_password.txt
   moodle_database_password:
     file: ./moodle_database_password.txt
+
+
